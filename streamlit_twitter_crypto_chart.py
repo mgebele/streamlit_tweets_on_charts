@@ -9,7 +9,6 @@ import csv
 import os
 import time
 from dateutil import tz
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import glob
 import quandl as q
 import streamlit as st
@@ -193,16 +192,10 @@ def main(user_selection_list_containing_twitter_user):
     # # # end - read in BTC data # # #
 
     # # # start - processing and cleaning of tweets # # #
-    # NLTK VADER for sentiment analysis
     # Instantiate the sentiment intensity analyzer
-    vader = SentimentIntensityAnalyzer()
     rel_tweet_data = tweet_data[tweet_data['text'].str.contains(
         '|'.join(option))]
     # rel_tweet_data = rel_tweet_data[~rel_tweet_data['text'].str.contains("@")]
-    rel_tweet_data['scores'] = rel_tweet_data['text'].apply(
-        vader.polarity_scores).tolist()
-    rel_tweet_data[['neg', 'neu', 'pos', 'comp']
-                   ] = rel_tweet_data['scores'].apply(pd.Series)
 
     rel_tweet_data["created_at"] = pd.to_datetime(
         rel_tweet_data["created_at"])
