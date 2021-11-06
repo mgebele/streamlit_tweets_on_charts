@@ -37,8 +37,6 @@ def _max_width_():
 
 
 _max_width_()
-global widthfig
-widthfig = 950
 
 
 def get_all_stored_twitter_user_csvs():
