@@ -22,20 +22,21 @@ access_secret = os.environ['twtr_access_secret']
 api_key = os.environ['api_key']
 
 
-# def _max_width_():
-#     max_width_str = f"max-width: 1300px;"
-#     st.markdown(
-#         f"""
-#     <style>
-#     .reportview-container .main .block-container{{
-#         {max_width_str}
-#     }}
-#     </style>
-#     """,
-#         unsafe_allow_html=True,
-#     )
+def _max_width_():
+    max_width_str = f"max-width: 1300px;"
+    st.markdown(
+        f"""
+    <style>
+    .reportview-container .main .block-container{{
+        {max_width_str}
+    }}
+    </style>
+    """,
+        unsafe_allow_html=True,
+    )
 
-# _max_width_()
+
+_max_width_()
 global widthfig
 widthfig = 950
 
