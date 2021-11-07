@@ -276,7 +276,8 @@ if user_input_new_search_word:
     button_add_new_searchword = st.sidebar.button('Add Searchword')
     if button_add_new_searchword:
         if user_input_new_search_word not in relevant_words:
-            allowed_characters=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','1','2','3','4','5','6','7','8','9','0','$','%']
+            allowed_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
+                                  'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '$', '%']
             if any(x not in allowed_characters for x in user_input_new_search_word):
                 st.error(
                     'Character not allowed, please dont use special characters')
@@ -286,8 +287,7 @@ if user_input_new_search_word:
                     write = csv.writer(f)
                     write.writerow(relevant_words)
                 st.success('Searchword added')
-                
-                
+
         else:
             st.error('Searchword already there')
 
