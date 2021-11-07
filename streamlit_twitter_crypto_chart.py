@@ -11,6 +11,7 @@ import time
 from dateutil import tz
 import glob
 import quandl as q
+import re
 import streamlit as st
 st.set_page_config(layout="wide")
 
@@ -19,7 +20,7 @@ consumer_key = os.environ['twtr_consumer_key']
 consumer_secret = os.environ['twtr_consumer_secret']
 access_key = os.environ['twtr_access_key']
 access_secret = os.environ['twtr_access_secret']
-api_key = os.environ['api_key']
+quandl_api_key = os.environ['quandl_api_key']
 
 
 def _max_width_():
@@ -46,6 +47,9 @@ def get_all_stored_twitter_user_csvs():
     # filter the price csv
     all_twitter_user_scraped_csvs = [
         k for k in all_twitter_user_scraped_csvs if 'BITFINEX' not in k]
+    # filter the price csv
+    all_twitter_user_scraped_csvs = [
+        k for k in all_twitter_user_scraped_csvs if 'relevant_words' not in k]
 
     display_name_all_twitter_user_scraped_csvs = [
         i.split(' ', 1)[0] for i in all_twitter_user_scraped_csvs]
@@ -131,37 +135,6 @@ def main(user_selection_list_containing_twitter_user):
     tweet_data = pd.read_csv("{}".format(
         user_selection_list_containing_twitter_user))
 
-    relevant_words = [
-        "good", "stop", "tier10k",
-        "think", "price", "buy",
-        "take", "money", 'bitcoin',
-        'BTC', 'long', 'trading',
-        'trade', 'short', 'market',
-        'BitMEX', 'money', 'position',
-        'good', 'trader', 'buy',
-        'low', 'ETH', 'price',
-        'bullish', 'high', 'close',
-        'buying', 'spot', 'ThinkingBitmex',
-        'bear', 'level', 'chart',
-        'range', 'profit', 'volume',
-        'dip', 'bid', 'bottom',
-        'liquidity', 'hedge', 'top',
-        'coin', 'call', 'sell',
-        'exchange', 'SNX', 'order'
-        'DeFi', 'bought', 'volatility',
-        'risk', 'bounce', 'ATH',
-        'PnL', 'size', 'million',
-        'selling', 'quarter', 'portfolio',
-        'signal', 'bull', 'SOL',
-        'FTT', 'shorting', '10k',
-        'bearish', 'option', 'asset',
-        'leverage', 'open', '5k',
-        'bad']
-
-    option = st.sidebar.multiselect(
-        'Searchwords:', relevant_words, relevant_words
-    )
-
     # # # start - read in BTC data # # #
     datasource = "BITFINEX/BTCUSD.csv"
     btcusd_data = pd.read_csv("{}".format(
@@ -179,7 +152,7 @@ def main(user_selection_list_containing_twitter_user):
     if most_recent_stored_btcusd_date != todays_date:
         data = q.get(datasource.split(".")[0],   start_date=most_recent_stored_btcusd_date,
                      end_date='{}'.format(todays_date),
-                     api_key=api_key)
+                     api_key=quandl_api_key)
         data.info()
         data["First"] = data.Last.shift(1)
         data.dropna()
@@ -251,8 +224,8 @@ def main(user_selection_list_containing_twitter_user):
     stopwords.update(["and", "or", "https", "year", "will", "post", "see",
                       "going", "now", "actually", "co", "go",  "look", "make", "right", "people",
                       "RT", "really", "first", "right", "week", "still", "twitter",
-                      "even", "re", "lol", "new", "much", "day",
-                      "don", "pretty", "looks", "Thank", "another",
+                      "even", "re", "lol", "new", "much", "day", "haha", "dont", "well", "us", "sure",
+                      "don", "pretty", "looks", "Thank", "another", "thing", "view", "lot",
                       "next", "many", "way", "one", "Oh", "say", "im"])
     wordcloud = WordCloud(width=int(1200/1.5), stopwords=stopwords, height=int(800/1.5), max_font_size=200,
                           max_words=50, collocations=False, background_color='black').generate(complete_str)
@@ -272,7 +245,7 @@ st.sidebar.text("")
 display_name_all_twitter_user_scraped_csvs, all_twitter_user_scraped_csvs = get_all_stored_twitter_user_csvs()
 
 display_name_user_selection_list_containing_twitter_user = st.sidebar.selectbox(
-    "Select exsiting Twitter-User", list(display_name_all_twitter_user_scraped_csvs), 0)
+    "Select existing Twitter-User", list(display_name_all_twitter_user_scraped_csvs), 0)
 
 # map name back to filename:
 user_selection_list_containing_twitter_user = [
@@ -283,7 +256,54 @@ user_selection_list_containing_twitter_user = user_selection_list_containing_twi
 # add new twitter user data
 twitter_name = ""
 user_input_twitter_name = st.sidebar.text_input(
-    "add new Twitter-User", twitter_name)
+    "Add new Twitter-User", twitter_name)
+
+st.sidebar.text("")
+st.sidebar.text("")
+
+new_search_word = ""
+user_input_new_search_word = st.sidebar.text_input(
+    "Add new Searchword", new_search_word)
+
+datasource = "relevant_words.csv"
+relevant_words = []
+with open(datasource, newline='') as inputfile:
+    for row in csv.reader(inputfile):
+        relevant_words.append(row)
+relevant_words = relevant_words[0]
+
+if user_input_new_search_word:
+    button_add_new_searchword = st.sidebar.button('Add Searchword')
+    if button_add_new_searchword:
+        if user_input_new_search_word not in relevant_words:
+            allowed_characters=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','1','2','3','4','5','6','7','8','9','0','$','%']
+            if any(x not in allowed_characters for x in user_input_new_search_word):
+                st.error(
+                    'Character not allowed, please dont use special characters')
+            else:
+                relevant_words.append(user_input_new_search_word)
+                with open(datasource, 'w') as f:
+                    write = csv.writer(f)
+                    write.writerow(relevant_words)
+                st.success('Searchword added')
+                
+                
+        else:
+            st.error('Searchword already there')
+
+
+relevant_words = []
+with open(datasource, newline='') as inputfile:
+    for row in csv.reader(inputfile):
+        relevant_words.append(row)
+relevant_words = relevant_words[0]
+
+# # # start - read in BTC data # # #
+option = st.sidebar.multiselect(
+    'Searchwords:', relevant_words, relevant_words
+)
+
+
 if user_input_twitter_name:
     if user_input_twitter_name not in display_name_all_twitter_user_scraped_csvs:
         button_get_twitter_name_data = st.sidebar.button(
@@ -311,6 +331,39 @@ excluded_words = ["buy", "sell"]
 
 
 if 'first_run' not in st.session_state:
+
+    relevant_words = [
+        "good", "stop",
+        "think", "price", "buy",
+        "take", "money", 'bitcoin',
+        'BTC', 'long', 'trading',
+        'trade', 'short', 'market',
+        'BitMEX', 'money', 'position',
+        'good', 'trader', 'buy',
+        'low', 'ETH', 'price',
+        'bullish', 'high', 'close',
+        'buying', 'spot', 'ThinkingBitmex',
+        'bear', 'level', 'chart',
+        'range', 'profit', 'volume',
+        'dip', 'bid', 'bottom',
+        'liquidity', 'hedge', 'top',
+        'coin', 'call', 'sell',
+        'exchange', 'SNX', 'order'
+        'DeFi', 'bought', 'volatility',
+        'risk', 'bounce', 'ATH',
+        'PnL', 'size', 'million',
+        'selling', 'quarter', 'portfolio',
+        'signal', 'bull', 'SOL',
+        'FTT', 'shorting', '10k',
+        'bearish', 'option', 'asset',
+        'leverage', 'open', '5k',
+        'bad']
+
+    datasource = "relevant_words.csv"
+    with open(datasource, 'w') as f:
+        write = csv.writer(f)
+        write.writerow(relevant_words)
+
     st.session_state.first_run = True
 
 if run_it or st.session_state.first_run:
