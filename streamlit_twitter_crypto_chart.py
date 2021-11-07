@@ -267,7 +267,7 @@ user_input_new_search_word = st.sidebar.text_input(
 
 datasource = "relevant_words.csv"
 relevant_words = []
-with open("/tmp/" + datasource, newline='') as inputfile:
+with open("tmp/" + datasource, newline='') as inputfile:
     for row in csv.reader(inputfile):
         relevant_words.append(row)
 relevant_words = relevant_words[0]
@@ -283,7 +283,7 @@ if user_input_new_search_word:
                     'Character not allowed, please dont use special characters')
             else:
                 relevant_words.append(user_input_new_search_word)
-                with open("/tmp/" + datasource, 'w') as f:
+                with open("tmp/" + datasource, 'w') as f:
                     write = csv.writer(f)
                     write.writerow(relevant_words)
                 st.success('Searchword added')
@@ -293,7 +293,7 @@ if user_input_new_search_word:
 
 
 relevant_words = []
-with open("/tmp/" + datasource, newline='') as inputfile:
+with open("tmp/" + datasource, newline='') as inputfile:
     for row in csv.reader(inputfile):
         relevant_words.append(row)
 relevant_words = relevant_words[0]
@@ -360,7 +360,7 @@ if 'first_run' not in st.session_state:
         'bad']
 
     datasource = "relevant_words.csv"
-    with open("/tmp/" + datasource, 'w') as f:
+    with open("tmp/" + datasource, 'w') as f:
         write = csv.writer(f)
         write.writerow(relevant_words)
 
