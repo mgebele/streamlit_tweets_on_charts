@@ -252,6 +252,9 @@ user_selection_list_containing_twitter_user = [
     k for k in all_twitter_user_scraped_csvs if display_name_user_selection_list_containing_twitter_user in k]
 user_selection_list_containing_twitter_user = user_selection_list_containing_twitter_user[0]
 
+allowed_user_input_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
+                                 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '$', '%', '_', '!', '§']
+
 
 # add new twitter user data
 twitter_name = ""
@@ -276,9 +279,8 @@ if user_input_new_search_word:
     button_add_new_searchword = st.sidebar.button('Add Searchword')
     if button_add_new_searchword:
         if user_input_new_search_word not in relevant_words:
-            allowed_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
-                                  'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '$', '%']
-            if any(x not in allowed_characters for x in user_input_new_search_word):
+
+            if any(x not in allowed_user_input_characters for x in user_input_new_search_word):
                 st.error(
                     'Character not allowed, please dont use special characters')
             else:
@@ -306,16 +308,19 @@ option = st.sidebar.multiselect(
 
 if user_input_twitter_name:
     if user_input_twitter_name not in display_name_all_twitter_user_scraped_csvs:
-        button_get_twitter_name_data = st.sidebar.button(
-            'get last 3300 tweets of {}'.format(user_input_twitter_name))
 
-        if button_get_twitter_name_data:
-            get_all_tweets(user_input_twitter_name)
-            # search for file with the name of user input
-            main(user_input_twitter_name)
+        if any(x not in allowed_user_input_characters for x in user_input_twitter_name):
+            st.error(
+                'Character not allowed, please dont use special characters')
+        else:
+            button_get_twitter_name_data = st.button(
+                'get last 3300 tweets of {}'.format(user_input_twitter_name))
+            if button_get_twitter_name_data:
+                get_all_tweets(user_input_twitter_name)
+                # search for file with the name of user input
+                main(user_input_twitter_name)
     else:
         st.error('Username already scraped, change the name')
-
 
 # add excluded_words
 st.sidebar.text("")
