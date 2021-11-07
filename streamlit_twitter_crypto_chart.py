@@ -136,9 +136,9 @@ def main(user_selection_list_containing_twitter_user):
         user_selection_list_containing_twitter_user))
 
     # # # start - read in BTC data # # #
-    datasource = "BITFINEX/BTCUSD.csv"
+    datasource_btcusd = "BITFINEX/BTCUSD.csv"
     btcusd_data = pd.read_csv("{}".format(
-        datasource.replace("/", " ")), index_col=0)
+        datasource_btcusd.replace("/", " ")), index_col=0)
     btcusd_data.index = pd.to_datetime(btcusd_data.index)
 
     most_recent_stored_btcusd_date = btcusd_data.sort_index().tail(
@@ -150,7 +150,7 @@ def main(user_selection_list_containing_twitter_user):
     # st.write(todays_date)
 
     if most_recent_stored_btcusd_date != todays_date:
-        data = q.get(datasource.split(".")[0],   start_date=most_recent_stored_btcusd_date,
+        data = q.get(datasource_btcusd.split(".")[0],   start_date=most_recent_stored_btcusd_date,
                      end_date='{}'.format(todays_date),
                      api_key=quandl_api_key)
         data.info()
@@ -160,7 +160,7 @@ def main(user_selection_list_containing_twitter_user):
         btcusd_data = btcusd_data.sort_index()
         # store current df with up-to-date values
         btcusd_data.to_csv('{}'.format(
-            datasource.replace("/", " ")), index=True)
+            datasource_btcusd.replace("/", " ")), index=True)
     # # # end - read in BTC data # # #
 
     # # # start - processing and cleaning of tweets # # #
@@ -186,7 +186,7 @@ def main(user_selection_list_containing_twitter_user):
                              high=btcusd_data['High'],
                              low=btcusd_data['Low'],
                              close=btcusd_data['Last'],
-                             name="{}".format(datasource.split("/")
+                             name="{}".format(datasource_btcusd.split("/")
                                               [1].split(".")[0]),
                              )],
     )
@@ -267,7 +267,7 @@ user_input_new_search_word = st.sidebar.text_input(
 
 datasource = "relevant_words.csv"
 relevant_words = []
-with open(datasource, newline='') as inputfile:
+with open("/tmp/" + datasource, newline='') as inputfile:
     for row in csv.reader(inputfile):
         relevant_words.append(row)
 relevant_words = relevant_words[0]
@@ -282,7 +282,7 @@ if user_input_new_search_word:
                     'Character not allowed, please dont use special characters')
             else:
                 relevant_words.append(user_input_new_search_word)
-                with open(datasource, 'w') as f:
+                with open("/tmp/" + datasource, 'w') as f:
                     write = csv.writer(f)
                     write.writerow(relevant_words)
                 st.success('Searchword added')
@@ -293,7 +293,7 @@ if user_input_new_search_word:
 
 
 relevant_words = []
-with open(datasource, newline='') as inputfile:
+with open("/tmp/" + datasource, newline='') as inputfile:
     for row in csv.reader(inputfile):
         relevant_words.append(row)
 relevant_words = relevant_words[0]
@@ -360,7 +360,7 @@ if 'first_run' not in st.session_state:
         'bad']
 
     datasource = "relevant_words.csv"
-    with open(datasource, 'w') as f:
+    with open("/tmp/" + datasource, 'w') as f:
         write = csv.writer(f)
         write.writerow(relevant_words)
 
