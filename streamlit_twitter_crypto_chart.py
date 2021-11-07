@@ -218,7 +218,7 @@ def main(user_selection_list_containing_twitter_user):
 
     # # # start - add word cloud # # #
     # get all the rows into one string
-    complete_str = tweet_data['text'].str.cat(sep=' ')
+    complete_str = rel_tweet_data['text'].str.cat(sep=' ')
 
     stopwords = set(STOPWORDS)
     stopwords.update(["and", "or", "https", "year", "will", "post", "see",
