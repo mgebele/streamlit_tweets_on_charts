@@ -43,7 +43,8 @@ _max_width_()
 def get_all_stored_twitter_user_csvs():
     # get all csv file names - already scraped users
     extension = 'csv'
-    all_twitter_user_scraped_csvs = glob.glob('*.{}'.format(extension))
+    all_twitter_user_scraped_csvs = glob.glob(
+        'twitterdata/*.{}'.format(extension))
     # filter the price csv
     all_twitter_user_scraped_csvs = [
         k for k in all_twitter_user_scraped_csvs if 'BITFINEX' not in k]
@@ -52,7 +53,7 @@ def get_all_stored_twitter_user_csvs():
         k for k in all_twitter_user_scraped_csvs if 'relevant_words' not in k]
 
     display_name_all_twitter_user_scraped_csvs = [
-        i.split(' ', 1)[0] for i in all_twitter_user_scraped_csvs]
+        i.split(' ', 1)[0].split('twitterdata\\')[1] for i in all_twitter_user_scraped_csvs]
 
     return display_name_all_twitter_user_scraped_csvs, all_twitter_user_scraped_csvs
 
@@ -111,7 +112,7 @@ def get_all_tweets(screen_name):
 
     # remove progress bar now after completion
     my_bar.empty()
-    with open('{0} {1}.csv'.format(screen_name, oldest), 'w',  encoding='utf-8') as f:
+    with open('twitterdata/{0} {1}.csv'.format(screen_name, oldest), 'w',  encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(["id", "created_at", "text"])
         writer.writerows(outtweets)
@@ -137,7 +138,7 @@ def main(user_selection_list_containing_twitter_user):
 
     # # # start - read in BTC data # # #
     datasource_btcusd = "BITFINEX/BTCUSD.csv"
-    btcusd_data = pd.read_csv("{}".format(
+    btcusd_data = pd.read_csv("coindata/{}".format(
         datasource_btcusd.replace("/", " ")), index_col=0)
     btcusd_data.index = pd.to_datetime(btcusd_data.index)
 
