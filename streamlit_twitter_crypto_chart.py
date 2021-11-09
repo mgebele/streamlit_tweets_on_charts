@@ -53,7 +53,7 @@ def get_all_stored_twitter_user_csvs():
         k for k in all_twitter_user_scraped_csvs if 'relevant_words' not in k]
 
     display_name_all_twitter_user_scraped_csvs = [
-        i.split(' ', 1)[0].split('twitterdata\\')[1] for i in all_twitter_user_scraped_csvs]
+        i.split(' ', 1)[0].split('twitterdata/')[1] for i in all_twitter_user_scraped_csvs]
 
     return display_name_all_twitter_user_scraped_csvs, all_twitter_user_scraped_csvs
 
