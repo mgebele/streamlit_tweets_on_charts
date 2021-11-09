@@ -16,11 +16,11 @@ import streamlit as st
 st.set_page_config(layout="wide")
 
 # Twitter API credentials
-consumer_key = os.environ['twtr_consumer_key']
-consumer_secret = os.environ['twtr_consumer_secret']
-access_key = os.environ['twtr_access_key']
-access_secret = os.environ['twtr_access_secret']
-quandl_api_key = os.environ['quandl_api_key']
+consumer_key = os.environ["twtr_consumer_key"]
+consumer_secret = os.environ["twtr_consumer_secret"]
+access_key = os.environ["twtr_access_key"]
+access_secret = os.environ["twtr_access_secret"]
+quandl_api_key = os.environ["quandl_api_key"]
 
 
 def _max_width_():
