@@ -131,7 +131,7 @@ def main(user_selection_list_containing_twitter_user):
 
     # streamlit layout
     st.title("Tweets on charts - {}".format(
-        user_selection_list_containing_twitter_user.split(" ")[0]))
+        user_selection_list_containing_twitter_user.split(" ")[0].split("twitterdata/")[1]))
 
     tweet_data = pd.read_csv("{}".format(
         user_selection_list_containing_twitter_user))
