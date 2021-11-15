@@ -23,6 +23,9 @@ access_secret = os.environ["twtr_access_secret"]
 quandl_api_key = os.environ["quandl_api_key"]
 
 
+# TODO STORE FILE CREATINO DATE IN CSV FILENAMES TO CHECK WHEN WAS CREATED AND 24 hours limit on updatin new tweets!
+
+
 def _max_width_():
     max_width_str = f"max-width: 1300px;"
     st.markdown(
@@ -341,21 +344,21 @@ if user_input_twitter_name:
 
             has_user_been_scraped_last_24h.append(os.path.getmtime(user))
 
-    if len(has_user_been_scraped_last_24h) == 0:
-        if any(x not in allowed_user_input_characters for x in user_input_twitter_name):
-            st.error(
-                'Character not allowed, please dont use special characters')
-        else:
-            button_get_twitter_name_data = st.button(
-                'get last 3300 tweets of {}'.format(user_input_twitter_name))
-            if button_get_twitter_name_data:
-                get_all_tweets(user_input_twitter_name)
-                # search for file with the name of user input
-                main(user_input_twitter_name)
-    elif len(has_user_been_scraped_last_24h) == 1:
-        st.error('Username has been already scraped in the last 24 hours.')
+    # if len(has_user_been_scraped_last_24h) == 0:
+    if any(x not in allowed_user_input_characters for x in user_input_twitter_name):
+        st.error(
+            'Character not allowed, please dont use special characters')
     else:
-        st.error('Error.')
+        button_get_twitter_name_data = st.button(
+            'get last 3300 tweets of {}'.format(user_input_twitter_name))
+        if button_get_twitter_name_data:
+            get_all_tweets(user_input_twitter_name)
+            # search for file with the name of user input
+            main(user_input_twitter_name)
+    # elif len(has_user_been_scraped_last_24h) == 1:
+    #     st.error('Username has been already scraped in the last 24 hours.')
+    # else:
+    #     st.error('Error.')
 
 
 # if update_selected_user:
