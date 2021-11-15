@@ -44,7 +44,7 @@ def get_all_stored_twitter_user_csvs():
     # get all csv file names - already scraped users
     extension = 'csv'
     all_twitter_user_scraped_csvs = glob.glob(
-        'twitterdata/*.{}'.format(extension))
+        'twitterdata/*.{}'.format(extension))  # CHANGE FOR SHARE STREAMLIT to /
     # filter the price csv
     all_twitter_user_scraped_csvs = [
         k for k in all_twitter_user_scraped_csvs if 'BITFINEX' not in k]
@@ -122,19 +122,31 @@ def main(user_selection_list_containing_twitter_user):
 
     display_name_all_twitter_user_scraped_csvs, all_twitter_user_scraped_csvs = get_all_stored_twitter_user_csvs()
 
+    # st.write(user_selection_list_containing_twitter_user)
+    # st.write(all_twitter_user_scraped_csvs)
     # map name back to filename:
+    # empty space at the end to check if its the exact same name and
+    # not matching until there like AltcoinGordon for AltcoinGordons
     user_selection_list_containing_twitter_user = [
         k for k in all_twitter_user_scraped_csvs if user_selection_list_containing_twitter_user in k]
-    user_selection_list_containing_twitter_user = user_selection_list_containing_twitter_user[0]
+
+    # here we can get multiple files from different times of scraping the specific user
+    # now we read all of those files and merge them together into one df
+    list_of_dfs = []
+    for user_file in user_selection_list_containing_twitter_user:
+        tweet_data = pd.read_csv("{}".format(user_file))
+        list_of_dfs.append(tweet_data)
+
+    tweet_data = pd.concat(list_of_dfs)
 
     st.session_state.first_run = False
+
+    # for the right naming we take the first entry
+    user_selection_list_containing_twitter_user = user_selection_list_containing_twitter_user[0]
 
     # streamlit layout
     st.title("Tweets on charts - {}".format(
         user_selection_list_containing_twitter_user.split(" ")[0].split("twitterdata/")[1]))
-
-    tweet_data = pd.read_csv("{}".format(
-        user_selection_list_containing_twitter_user))
 
     # # # start - read in BTC data # # #
     datasource_btcusd = "BITFINEX/BTCUSD.csv"
@@ -259,8 +271,13 @@ allowed_user_input_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j
 
 # add new twitter user data
 twitter_name = ""
+
+# update_selected_user = st.sidebar.button(
+#     'Update tweets')
+
 user_input_twitter_name = st.sidebar.text_input(
-    "Add new Twitter-User", twitter_name)
+    "Add new Twitter-User data", twitter_name)
+
 
 st.sidebar.text("")
 st.sidebar.text("")
@@ -308,8 +325,18 @@ option = st.sidebar.multiselect(
 
 
 if user_input_twitter_name:
-    if user_input_twitter_name not in display_name_all_twitter_user_scraped_csvs:
+    # if user_input_twitter_name not in display_name_all_twitter_user_scraped_csvs:
+    display_name_all_twitter_user_scraped_csvs, all_twitter_user_scraped_csvs = get_all_stored_twitter_user_csvs()
+    # map name back to filename:
+    user_selection_list_containing_twitter_user = [
+        k for k in all_twitter_user_scraped_csvs if user_input_twitter_name+" " in k]
+    has_user_been_scraped_last_24h = []
+    for user in user_selection_list_containing_twitter_user:
+        # if the file was created longer than 24 hours ago
+        if os.path.getmtime(user) + 60*60*24 > time.time():
+            has_user_been_scraped_last_24h.append(os.path.getmtime(user))
 
+    if len(has_user_been_scraped_last_24h) == 0:
         if any(x not in allowed_user_input_characters for x in user_input_twitter_name):
             st.error(
                 'Character not allowed, please dont use special characters')
@@ -320,8 +347,42 @@ if user_input_twitter_name:
                 get_all_tweets(user_input_twitter_name)
                 # search for file with the name of user input
                 main(user_input_twitter_name)
+    elif len(has_user_been_scraped_last_24h) == 1:
+        st.error('Username has been already scraped in the last 24 hours.')
     else:
-        st.error('Username already scraped, change the name')
+        st.error('Error.')
+
+
+# if update_selected_user:
+#     # if user_input_twitter_name not in display_name_all_twitter_user_scraped_csvs:
+#     display_name_all_twitter_user_scraped_csvs, all_twitter_user_scraped_csvs = get_all_stored_twitter_user_csvs()
+#     # map name back to filename:
+#     st.write(display_name_user_selection_list_containing_twitter_user)
+#     user_selection_list_containing_twitter_user = [
+#         k for k in all_twitter_user_scraped_csvs if display_name_user_selection_list_containing_twitter_user+" " in k]
+#     has_user_been_scraped_last_24h = []
+#     for user in user_selection_list_containing_twitter_user:
+#         # if the file was created longer than 24 hours ago
+#         if os.path.getmtime(user) + 60*60*24 > time.time():
+#             has_user_been_scraped_last_24h.append(os.path.getmtime(user))
+
+#     if len(has_user_been_scraped_last_24h) == 0:
+#         if any(x not in allowed_user_input_characters for x in display_name_user_selection_list_containing_twitter_user):
+#             st.error(
+#                 'Character not allowed, please dont use special characters')
+#         else:
+#             button_get_twitter_name_data = st.button(
+#                 'get last 3300 tweets of {}'.format(display_name_user_selection_list_containing_twitter_user))
+#             if button_get_twitter_name_data:
+#                 get_all_tweets(
+#                     display_name_user_selection_list_containing_twitter_user)
+#                 # search for file with the name of user input
+#                 main(display_name_user_selection_list_containing_twitter_user)
+#     elif len(has_user_been_scraped_last_24h) == 1:
+#         st.error('Username has been already scraped in the last 24 hours.')
+#     else:
+#         st.error('Error.')
+
 
 # add excluded_words
 st.sidebar.text("")
