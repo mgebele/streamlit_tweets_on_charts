@@ -333,7 +333,12 @@ if user_input_twitter_name:
     has_user_been_scraped_last_24h = []
     for user in user_selection_list_containing_twitter_user:
         # if the file was created longer than 24 hours ago
+        print("os.path.getmtime(user) {}".format(os.path.getmtime(user)))
+        print("user".format(user))
+        print("user_selection_list_containing_twitter_user")
+        print(user_selection_list_containing_twitter_user)
         if os.path.getmtime(user) + 60*60*24 > time.time():
+
             has_user_been_scraped_last_24h.append(os.path.getmtime(user))
 
     if len(has_user_been_scraped_last_24h) == 0:
