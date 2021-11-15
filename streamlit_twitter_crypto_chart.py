@@ -175,7 +175,7 @@ def main(user_selection_list_containing_twitter_user):
         btcusd_data = pd.concat([btcusd_data, data])
         btcusd_data = btcusd_data.sort_index()
         # store current df with up-to-date values
-        btcusd_data.to_csv('{}'.format(
+        btcusd_data.to_csv('coindata/{}'.format(
             datasource_btcusd.replace("/", " ")), index=True)
     # # # end - read in BTC data # # #
 
