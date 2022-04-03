@@ -131,8 +131,8 @@ def main(user_selection_list_containing_twitter_user):
     # map name back to filename:
     # empty space at the end to check if its the exact same name and
     # not matching until there like AltcoinGordon for AltcoinGordons
-    user_selection_list_containing_twitter_user = [
-        k for k in all_twitter_user_scraped_csvs if user_selection_list_containing_twitter_user in k]
+    # user_selection_list_containing_twitter_user = [
+    #     k for k in all_twitter_user_scraped_csvs if user_selection_list_containing_twitter_user in k]
 
     # here we can get multiple files from different times of scraping the specific user
     # now we read all of those files and merge them together into one df
@@ -187,7 +187,9 @@ def main(user_selection_list_containing_twitter_user):
     # rel_tweet_data = rel_tweet_data[~rel_tweet_data['text'].str.contains("@")]
 
     rel_tweet_data["created_at"] = pd.to_datetime(
-        rel_tweet_data["created_at"])
+        rel_tweet_data["created_at"], utc=True, errors='coerce')
+    rel_tweet_data = rel_tweet_data[rel_tweet_data['created_at'].notna()]
+
     rel_tweet_data['created_at'] = rel_tweet_data['created_at'].dt.tz_localize(
         None)
     rel_tweet_data['created_at_day'] = rel_tweet_data['created_at'].dt.round(
@@ -195,6 +197,8 @@ def main(user_selection_list_containing_twitter_user):
     rel_tweet_data_incl_price = pd.merge(
         rel_tweet_data, btcusd_data, how="left", left_on=rel_tweet_data["created_at_day"], right_on=btcusd_data.index,)
     # # # end - processing and cleaning of tweets # # #
+
+    print("tweets displayed", len(rel_tweet_data))
 
     # # # start - chart with tweets # # #
     fig = go.Figure(
@@ -262,12 +266,12 @@ st.sidebar.text("")
 display_name_all_twitter_user_scraped_csvs, all_twitter_user_scraped_csvs = get_all_stored_twitter_user_csvs()
 
 display_name_user_selection_list_containing_twitter_user = st.sidebar.selectbox(
-    "Select existing Twitter-User", list(display_name_all_twitter_user_scraped_csvs), 0)
+    "Select existing Twitter-User", list(set(display_name_all_twitter_user_scraped_csvs)), 0)
 
 # map name back to filename:
 user_selection_list_containing_twitter_user = [
     k for k in all_twitter_user_scraped_csvs if display_name_user_selection_list_containing_twitter_user in k]
-user_selection_list_containing_twitter_user = user_selection_list_containing_twitter_user[0]
+user_selection_list_containing_twitter_user = user_selection_list_containing_twitter_user
 
 allowed_user_input_characters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
                                  'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '$', '%', '_', '!', '§']
