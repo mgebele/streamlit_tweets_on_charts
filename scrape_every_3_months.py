@@ -4,6 +4,7 @@
 # # 3. push csvs automatically into repo here!
 
 # %%
+from git import Repo
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
 from datetime import datetime, timedelta
@@ -115,3 +116,16 @@ for screen_name in unique_display_name_all_twitter_user_scraped_csvs:
 
     except:
         print("error for {}".format(screen_name))
+
+# now update git:
+# # make sure .git folder is properly configured
+
+PATH_OF_GIT_REPO = r'C:\Users\mg\github\\streamlit_tweets_on_charts\.git'
+now = datetime.datetime.now()
+COMMIT_MESSAGE = 'new game update htdatan {}'.format(now.date())
+
+repo = Repo(PATH_OF_GIT_REPO)
+repo.git.add(update=True)
+repo.index.commit(COMMIT_MESSAGE)
+origin = repo.remote(name='origin')
+origin.push()
