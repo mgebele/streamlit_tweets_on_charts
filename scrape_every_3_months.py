@@ -122,7 +122,7 @@ for screen_name in unique_display_name_all_twitter_user_scraped_csvs:
 
 PATH_OF_GIT_REPO = r'C:\Users\mg\github\\streamlit_tweets_on_charts\.git'
 now = datetime.datetime.now()
-COMMIT_MESSAGE = 'new game update htdatan {}'.format(now.date())
+COMMIT_MESSAGE = 'new tweet update {}'.format(now.date())
 
 repo = Repo(PATH_OF_GIT_REPO)
 repo.git.add(update=True)
