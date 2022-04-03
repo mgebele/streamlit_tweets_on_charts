@@ -57,7 +57,7 @@ def get_all_stored_twitter_user_csvs():
         k for k in all_twitter_user_scraped_csvs if 'relevant_words' not in k]
 
     display_name_all_twitter_user_scraped_csvs = [
-        i.split(' ', 1)[0].split("twitterdata\\")[1] for i in all_twitter_user_scraped_csvs]
+        i.split(' ', 1)[0].split("twitterdata/")[1] for i in all_twitter_user_scraped_csvs]
 
     return display_name_all_twitter_user_scraped_csvs, all_twitter_user_scraped_csvs
 
@@ -150,7 +150,7 @@ def main(user_selection_list_containing_twitter_user):
 
     # streamlit layout
     st.title("Tweets on charts - {}".format(
-        user_selection_list_containing_twitter_user.split(" ")[0].split("twitterdata\\")[1]))
+        user_selection_list_containing_twitter_user.split(" ")[0].split("twitterdata/")[1]))
 
     # # # start - read in BTC data # # #
     datasource_btcusd = "BITFINEX/BTCUSD.csv"
