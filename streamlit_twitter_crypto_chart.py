@@ -43,7 +43,8 @@ def _max_width_():
 
 _max_width_()
 
-path='twitterdata\\'
+# / - for deployment and \\ for local testing
+path='twitterdata/'
 
 def get_all_stored_twitter_user_csvs():
     # get all csv file names - already scraped users
