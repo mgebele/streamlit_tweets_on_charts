@@ -43,12 +43,13 @@ def _max_width_():
 
 _max_width_()
 
+path='twitterdata\\'
 
 def get_all_stored_twitter_user_csvs():
     # get all csv file names - already scraped users
     extension = 'csv'
     all_twitter_user_scraped_csvs = glob.glob(
-        r'twitterdata/*.{}'.format(extension))  # CHANGE FOR SHARE STREAMLIT to /
+        r'{}*.{}'.format(path, extension))  # CHANGE FOR SHARE STREAMLIT to /
     # filter the price csv
     all_twitter_user_scraped_csvs = [
         k for k in all_twitter_user_scraped_csvs if 'BITFINEX' not in k]
@@ -57,7 +58,7 @@ def get_all_stored_twitter_user_csvs():
         k for k in all_twitter_user_scraped_csvs if 'relevant_words' not in k]
 
     display_name_all_twitter_user_scraped_csvs = [
-        i.split(' ', 1)[0].split("twitterdata/")[1] for i in all_twitter_user_scraped_csvs]
+        i.split(' ', 1)[0].split("{}".format(path))[1] for i in all_twitter_user_scraped_csvs]
 
     return display_name_all_twitter_user_scraped_csvs, all_twitter_user_scraped_csvs
 
@@ -150,7 +151,7 @@ def main(user_selection_list_containing_twitter_user):
 
     # streamlit layout
     st.title("Tweets on charts - {}".format(
-        user_selection_list_containing_twitter_user.split(" ")[0].split("twitterdata/")[1]))
+        user_selection_list_containing_twitter_user.split(" ")[0].split("{}".format(path))[1]))
 
     # # # start - read in BTC data # # #
     datasource_btcusd = "BITFINEX/BTCUSD.csv"
@@ -181,6 +182,10 @@ def main(user_selection_list_containing_twitter_user):
     # # # end - read in BTC data # # #
 
     # # # start - processing and cleaning of tweets # # #
+
+
+
+
     # Instantiate the sentiment intensity analyzer
     rel_tweet_data = tweet_data[tweet_data['text'].str.contains(
         '|'.join(option))]
@@ -194,6 +199,12 @@ def main(user_selection_list_containing_twitter_user):
         None)
     rel_tweet_data['created_at_day'] = rel_tweet_data['created_at'].dt.round(
         '1d')
+
+    print(rel_tweet_data.columns)
+    print(rel_tweet_data.head())
+    if deactivate_retweets:
+        rel_tweet_data = rel_tweet_data[~rel_tweet_data['text'].str.startswith("RT ") ]
+
     rel_tweet_data_incl_price = pd.merge(
         rel_tweet_data, btcusd_data, how="left", left_on=rel_tweet_data["created_at_day"], right_on=btcusd_data.index,)
     # # # end - processing and cleaning of tweets # # #
@@ -289,6 +300,8 @@ user_input_twitter_name = st.sidebar.text_input(
 
 st.sidebar.text("")
 st.sidebar.text("")
+
+deactivate_retweets = st.sidebar.checkbox('no Retweets')
 
 new_search_word = ""
 user_input_new_search_word = st.sidebar.text_input(
