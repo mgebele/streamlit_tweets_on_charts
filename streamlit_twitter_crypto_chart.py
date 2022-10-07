@@ -17,11 +17,11 @@ pd.set_option('display.max_columns', None)
 st.set_page_config(layout="wide")
 
 # Twitter API credentials
-consumer_key = os.environ["twtr_consumer_key"]
-consumer_secret = os.environ["twtr_consumer_secret"]
-access_key = os.environ["twtr_access_key"]
-access_secret = os.environ["twtr_access_secret"]
-quandl_api_key = os.environ["quandl_api_key"]
+consumer_key = st.secrets["twtr_consumer_key"]
+consumer_secret = st.secrets["twtr_consumer_secret"]
+access_key = st.secrets["twtr_access_key"]
+access_secret = st.secrets["twtr_access_secret"]
+quandl_api_key = st.secrets["quandl_api_key"]
 
 
 # TODO STORE FILE CREATINO DATE IN CSV FILENAMES TO CHECK WHEN WAS CREATED AND 24 hours limit on updatin new tweets!
