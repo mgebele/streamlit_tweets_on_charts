@@ -125,8 +125,16 @@ now = datetime.datetime.now()
 COMMIT_MESSAGE = 'new tweet update {}'.format(now.date())
 
 repo = Repo(PATH_OF_GIT_REPO)
+
+
+
+
 repo.git.add(update=True)
 repo.git.add('.')
 repo.index.commit(COMMIT_MESSAGE)
 origin = repo.remote(name='origin')
+origin.pull()
+time.sleep(6)
+origin.push()
+time.sleep(1)
 origin.push()
