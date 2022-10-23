@@ -124,6 +124,15 @@ def get_all_tweets(screen_name):
         writer.writerows(outtweets)
 
 
+def insertNewlines(text, lineLength=int(30)):
+    if len(text) <= lineLength:
+       return text
+    elif text[lineLength] != ' ':
+       return insertNewlines(text[:], lineLength + 1)
+    else:
+       return text[:lineLength] + '<br>' + insertNewlines(text[lineLength + 1:], lineLength)
+
+
 def main(user_selection_list_containing_twitter_user):
 
     display_name_all_twitter_user_scraped_csvs, all_twitter_user_scraped_csvs = get_all_stored_twitter_user_csvs()
@@ -208,6 +217,10 @@ def main(user_selection_list_containing_twitter_user):
 
     rel_tweet_data_incl_price = pd.merge(
         rel_tweet_data, btcusd_data, how="left", left_on=rel_tweet_data["created_at_day"], right_on=btcusd_data.index,)
+
+    # add new line after 30 chars to better show text in plotly hover! So its not only all text in one line!
+    rel_tweet_data_incl_price["text_newline"]=rel_tweet_data_incl_price["text"].apply(lambda row:insertNewlines(row)) 
+
     # # # end - processing and cleaning of tweets # # #
 
     print("tweets displayed", len(rel_tweet_data))
@@ -230,7 +243,7 @@ def main(user_selection_list_containing_twitter_user):
                    x=rel_tweet_data_incl_price["created_at"],
                    y=rel_tweet_data_incl_price["High"]*1.1,
                    name='tweets',
-                   text=rel_tweet_data_incl_price["text"],
+                   text=rel_tweet_data_incl_price["text_newline"],
                    textposition="top center",
                    marker={'color': "#0d75f8",  # clear blue
                            'size': 4
