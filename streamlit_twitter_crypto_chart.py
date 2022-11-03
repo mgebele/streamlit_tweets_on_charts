@@ -253,7 +253,7 @@ def main(user_selection_list_containing_twitter_user):
     fig.update_layout(
         # title="Plot Title",
         autosize=False,
-        width=int(1400/1.3),
+        width=int(2000/1.3),
         height=int(800/1.3),
         xaxis_range=[rel_tweet_data_incl_price["created_at"].min(
         ), rel_tweet_data_incl_price["created_at"].max()]
